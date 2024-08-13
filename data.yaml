@@ -1,0 +1,8 @@
+path: ../datasets/roboflow
+
+train: dataset/train/images
+val: dataset/valid/images
+test: dataset/test/images
+
+nc: 7
+names: ['elbow positive', 'fingers positive', 'forearm fracture', 'humerus', 'humerus fracture', 'shoulder fracture', 'wrist positive']

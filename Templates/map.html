@@ -1,0 +1,122 @@
+<!--
+USE Lan for batter accuracy
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Hospitals</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const map = L.map('map').setView([0, 0], 2); // Initial world view
+
+            // Load and display tile layers
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            // Get user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+
+            function showPosition(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                console.error(lat,lon)
+                // Center the map on user's location
+                map.setView([lat, lon], 13); // Set zoom level to show nearby area
+
+                // Marker for user location
+                L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
+
+                // Fetch nearby hospitals
+                fetchNearbyHospitals(lat, lon);
+            }
+
+            function showError(error) {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("User denied the request for Geolocation.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Location information is unavailable.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("The request to get user location timed out.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        alert("An unknown error occurred.");
+                        break;
+                }
+            }
+
+            function fetchNearbyHospitals(lat, lon) {
+                const radius = 6000; // Define the radius in meters
+                const overpassUrl = "http://overpass-api.de/api/interpreter";
+                const overpassQuery = `
+                [out:json];
+                (
+                    node["amenity"="hospital"](around:${radius},${lat},${lon});
+                    node["healthcare"="clinic"](around:${radius},${lat},${lon});
+                );
+                out body;
+                `;
+
+                fetch(overpassUrl, {
+                    method: 'POST',
+                    body: overpassQuery,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+        data.elements.forEach(hospital => {
+            if (hospital.lat && hospital.lon) {
+                const hospitalName = hospital.tags.name || 'Unnamed Hospital/Clinic';
+                const marker = L.marker([hospital.lat, hospital.lon]).addTo(map)
+                    .bindPopup(hospitalName);
+                
+                // Add click event to the marker
+                marker.on('click', function() {
+                    window.location.href = `/book?hospital=${encodeURIComponent(hospitalName)}`;
+                    console.error(hospitalName)
+                });
+            }
+        });
+    })
+                .catch(error => {
+                    console.error('Error fetching hospitals:', error);
+                    //alert("Could not fetch nearby hospitals. Please try again later.");
+                });
+            }
+        });
+    </script>
+    
+</body>
+</html>

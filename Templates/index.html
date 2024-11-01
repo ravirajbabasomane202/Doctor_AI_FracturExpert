@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock %} -  DocExper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1576765608269-0b8de28d70b5?fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.7);
+        }
+        .hero p {
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+        }
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1.5rem;
+        }
+        footer p {
+            margin: 0;
+        }
+
+
+
+
+/* Carousel container styling */
+#carouselExampleIndicators {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Carousel indicators */
+.carousel-indicators li {
+  background-color: #666;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+}
+
+.carousel-indicators .active {
+  background-color: #fff;
+}
+
+/* Carousel images */
+.carousel-item img {
+  max-height: 400px;
+  object-fit: cover;
+}
+
+
+
+
+
+
+    </style>
+</head>
+<body style="background-color: #ffffff;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}"> DocExper</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book') }}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('appointments') }}">Appoinments</a>
+                    </li>
+                    {% if session.get('user_id') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                {% endif %}
+        
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div>
+            <h1>Find Nearby Hospitals</h1>
+            <p>Detect fractures and get the nearest hospitals in your area.</p>
+            <a href="#services" class="btn btn-light btn-lg mt-3">Explore Services</a>
+        </div>
+    </div>
+
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
+            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="https://abiscans.com/wp-content/uploads/2023/08/radiology-doctor-examining-chest-x-ray-film-patient-health-care-clinic-1-scaled.jpg" alt="First slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: black;">Fracture Analysis</h5>
+                    <p>Advanced X-Ray scans for fracture detection</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="https://sharekhaneducation.com/blog/wp-content/uploads/2022/10/Digital-map-image.jpg" alt="Second slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: black;">Find Nearby Hospitals</h5>
+                    <p>Get access to nearby hospitals on the map</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="https://media.istockphoto.com/id/1454530428/photo/group-of-business-persons-talking-in-the-office.jpg?s=612x612&w=0&k=20&c=eqJRlvK8XeBD69f-ZwVae6CxK7OJmLxTlwVsQhF8LcA=" alt="Third slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: black;">Consultation</h5>
+                    <p>Meet experts and receive personalized care</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+      
+   
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4" id="services">Our Services</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="https://media.springernature.com/lw1200/springer-static/image/art%3A10.1007%2Fs11548-021-02552-5/MediaObjects/11548_2021_2552_Fig6_HTML.jpg" class="card-img-top" alt="Fraction Detection">
+                    <div class="card-body">
+                        <h5 class="card-title">Fracture Detection</h5>
+                        <p class="card-text">Quickly detect fractures and get immediate assistance from the best medical professionals.</p>
+                        <a href="#" class="btn btn-primary">Detect</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Openstreetmap_logo.svg/800px-Openstreetmap_logo.svg.png" class="card-img-top" alt="Emergency Services">
+                    <div class="card-body">
+                        <h5 class="card-title">Emergency Services</h5>
+                        <p class="card-text">Access immediate emergency services at the nearest hospitals with a few taps.</p>
+                        <a href="{{ url_for('map_view') }}" class="btn btn-primary">Find Hospital</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="https://www.tritonhospital.com/images/appointment/book-appointment.jpeg" class="card-img-top" alt="Consultation">
+                    <div class="card-body">
+                        <h5 class="card-title">Consultation</h5>
+                        <p class="card-text">Book professional medical consultations at your convenience and get expert advice.</p>
+                        <a href="{{ url_for('book') }}" class="btn btn-primary">Book Appoinments</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center">
+        <p>&copy; 2024  DocExper. All rights reserved.</p>
+        <p>Designed with ❤ for better healthcare access</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

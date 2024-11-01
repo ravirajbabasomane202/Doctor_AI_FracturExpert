@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Book Appointment{% endblock %} - Hospital Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .appointment-form {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .appointment-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}"> DocExper</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book') }}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('appointments') }}">Appoinments</a>
+                    </li>
+                    {% if session.get('user_id') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                {% endif %}
+        
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="appointment-form">
+        <h2>Book an Appointment</h2>
+        <form action="{{ url_for('book') }}" method="post">
+            <div class="mb-3">
+                <label for="fullName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+            </div>
+            <div class="mb-3">
+                <label for="hospital" class="form-label">Select Nearest Hospital</label>
+                <select class="form-select" id="hospital" name="hospital" required>
+                    <option value="">Fetching nearby hospitals...</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="appointmentDate" class="form-label">Preferred Appointment Date</label>
+                <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="appointmentTime" class="form-label">Preferred Appointment Time</label>
+                <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
+            </div>
+            <div class="mb-3">
+                <label for="notes" class="form-label">Additional Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional requests or details..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Submit Appointment Request</button>
+        </form>
+    </div>
+
+    <footer class="text-center mt-5">
+        <p>&copy; 2024 Hospital Finder. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Check for Geolocation API support
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(fetchNearbyHospitals, handleError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+    
+            function fetchNearbyHospitals(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+    
+                // Query Overpass API for hospitals within a 5 km radius
+                const query = `
+                    [out:json];
+                    node
+                      ["amenity"="hospital"]
+                      (around:6000, ${lat}, ${lon});
+                    out;
+                `;
+    
+                fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const hospitalSelect = document.getElementById("hospital");
+                        hospitalSelect.innerHTML = '<option value="">Select nearest hospital...</option>';
+    
+                        data.elements.forEach(hospital => {
+                            const option = document.createElement("option");
+                            option.value = hospital.tags.name || "Unnamed Hospital";
+                            option.textContent = hospital.tags.name || "Unnamed Hospital";
+                            hospitalSelect.appendChild(option);
+                        });
+
+                        if (hospitalName) {
+                        hospitalSelect.value = hospitalName;
+                    }
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching hospitals:", error);
+                        alert("Could not fetch nearby hospitals. Please try again later.");
+                    });
+            }
+    
+            function handleError(error) {
+                console.error("Geolocation error:", error);
+                alert("Could not retrieve your location. Please enable location access and try again.");
+            }
+        });
+    </script> -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hospitalName = urlParams.get('hospital'); // Get the hospital name from the URL
+    
+            // Check for Geolocation API support
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    fetchNearbyHospitals(position, hospitalName); // Pass hospitalName to the function
+                }, handleError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+    
+            function fetchNearbyHospitals(position, hospitalName) { // Accept hospitalName as an argument
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+    
+                const query = `
+                    [out:json];
+                    node
+                      ["amenity"="hospital"]
+                      (around:6000, ${lat}, ${lon});
+                    out;
+                `;
+    
+                fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const hospitalSelect = document.getElementById("hospital");
+                        hospitalSelect.innerHTML = '<option value="">Select nearest hospital...</option>';
+    
+                        data.elements.forEach(hospital => {
+                            const option = document.createElement("option");
+                            option.value = hospital.tags.name || "Unnamed Hospital";
+                            option.textContent = hospital.tags.name || "Unnamed Hospital";
+                            hospitalSelect.appendChild(option);
+                        });
+    
+                        // Set the selected hospital if it exists
+                        if (hospitalName) {
+                            hospitalSelect.value = hospitalName;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching hospitals:", error);
+                        alert("Could not fetch nearby hospitals. Please try again later.");
+                    });
+            }
+    
+            function handleError(error) {
+                console.error("Geolocation error:", error);
+                alert("Could not retrieve your location. Please enable location access and try again.");
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Remedies</title>
+</head>
+<body>
+    <h1>Home Remedies</h1>
+
+    <div>
+        <h3>Detection Results:</h3>
+        <img src="{{ url_for('static', filename='uploads/detection.png') }}" alt="Detection Image">
+    </div>
+    
+
+
+    {% if remedies %}
+        <ul>
+            {% for condition, remedy in remedies.items() %}
+                <li><strong>{{ condition }}:</strong> {{ remedy }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No specific condition detected. Please consult a healthcare provider.</p>
+    {% endif %}
+</body>
+</html>
